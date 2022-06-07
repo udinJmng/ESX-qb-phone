@@ -721,41 +721,41 @@ AddEventHandler('qb-phone:server:UpdateMessages', function(ChatMessages, ChatNum
             TargetPhone = getPhoneNumber(Player[1].identifier)
 
             if TargetData ~= nil then
-                ExecuteSql(false, "SELECT * FROM `phone_messages` WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..ChatNumber.."'", function(Chat)
+                MySQL.query.await("SELECT * FROM `phone_messages` WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..ChatNumber.."'", function(Chat)
                     if Chat[1] ~= nil then
                         -- Update for target
-                        ExecuteSql(false, "UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..Player[1].identifier.."' AND `number` = '"..SenderPhone.."'")
+                        MySQL.update("UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..Player[1].identifier.."' AND `number` = '"..SenderPhone.."'")
                                 
                         -- Update for sender
-                        ExecuteSql(false, "UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..TargetPhone.."'")
+                        MySQL.update("UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..TargetPhone.."'")
                     
                         -- Send notification & Update messages for target
                         TriggerClientEvent('qb-phone:client:UpdateMessages', TargetData.source, ChatMessages, ChatNumber, false)
                     else
                         -- Insert for target
-                        ExecuteSql(false, "INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..Player[1].identifier.."', '"..SenderPhone.."', '"..json.encode(ChatMessages).."')")
+                       MySQL.insert("INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..Player[1].identifier.."', '"..SenderPhone.."', '"..json.encode(ChatMessages).."')")
                                             
                         -- Insert for sender
-                        ExecuteSql(false, "INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..SenderData.identifier.."', '"..TargetPhone.."', '"..json.encode(ChatMessages).."')")
+                       MySQL.insert("INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..SenderData.identifier.."', '"..TargetPhone.."', '"..json.encode(ChatMessages).."')")
 
                         -- Send notification & Update messages for target
                         TriggerClientEvent('qb-phone:client:UpdateMessages', TargetData.source, ChatMessages, ChatNumber, true)
                     end
                 end)
             else
-                ExecuteSql(false, "SELECT * FROM `phone_messages` WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..ChatNumber.."'", function(Chat)
+                MySQL.query.await("SELECT * FROM `phone_messages` WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..ChatNumber.."'", function(Chat)
                     if Chat[1] ~= nil then
                         -- Update for target
-                        ExecuteSql(false, "UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..Player[1].identifier.."' AND `number` = '"..SenderPhone.."'")
+                        MySQL.update("UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..Player[1].identifier.."' AND `number` = '"..SenderPhone.."'")
                                 
                         -- Update for sender
-                        ExecuteSql(false, "UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..TargetPhone.."'")
+                        MySQL.update("UPDATE `phone_messages` SET `messages` = '"..json.encode(ChatMessages).."' WHERE `identifier` = '"..SenderData.identifier.."' AND `number` = '"..TargetPhone.."'")
                     else
                         -- Insert for target
-                        ExecuteSql(false, "INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..Player[1].identifier.."', '"..SenderPhone.."', '"..json.encode(ChatMessages).."')")
+                        MySQL.insert("INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..Player[1].identifier.."', '"..SenderPhone.."', '"..json.encode(ChatMessages).."')")
                         
                         -- Insert for sender
-                        ExecuteSql(false, "INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..SenderData.identifier.."', '".. TargetPhone .."', '"..json.encode(ChatMessages).."')")
+                        MySQL.insert("INSERT INTO `phone_messages` (`identifier`, `number`, `messages`) VALUES ('"..SenderData.identifier.."', '".. TargetPhone .."', '"..json.encode(ChatMessages).."')")
                     end
                 end)
             end
